@@ -1,5 +1,5 @@
 pipeline {
-    //agent any
+    agent any
     //maven代理（直接从官网拉取maven镜像）
     //agent {
         //docker {
