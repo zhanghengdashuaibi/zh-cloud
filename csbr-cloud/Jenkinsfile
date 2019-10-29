@@ -30,7 +30,7 @@ pipeline {
         stage('Build') {
             steps {
                 //sh './gradlew build'
-                 //执行shell命令
+                 //执行shell命令 mvn package -pl ${your.project.name} -am
                  sh 'mvn -f ${SVN_FOLD}/pom.xml clean package -Dmaven.test.skip=true -X'
                  //sh 'mvn -f ${SVN_FOLD}/pom.xml clean package'
             }
@@ -46,12 +46,12 @@ pipeline {
     }
 
     //归档
-    post {
-        always {
-            echo 'Archive artifacts'
-            archiveArtifacts artifacts: "${SVN_FOLD}/target/*.jar", excludes: "${SVN_FOLD}/target"
-        }
-    }
+    //post {
+        //always {
+            //echo 'Archive artifacts'
+            //archiveArtifacts artifacts: "${SVN_FOLD}/target/*.jar", excludes: "${SVN_FOLD}/target"
+        //}
+    //}
 
 
 }
