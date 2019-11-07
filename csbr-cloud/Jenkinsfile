@@ -16,10 +16,10 @@ pipeline {
     }
     //定时任务
     //triggers { pollSCM('H 4/* 0 0 1-5') }
-    triggers {
+    //triggers {
         //每天凌晨2点自动构建
-        cron('H 2 * * *')
-    }
+    //    cron('H 2 * * *')
+    //}
     //全局定义工具
     tools {
         //工具名称必须在Jenkins 管理Jenkins → 全局工具配置中预配置。
@@ -31,7 +31,7 @@ pipeline {
             steps {
                 //sh './gradlew build'
                  //执行shell命令 mvn package -pl ${your.project.name} -am
-                 sh 'mvn -f ${SVN_FOLD}/pom.xml clean package -Dmaven.test.skip=true -X'
+                 sh 'mvn -f ./pom.xml clean install -Dmaven.test.skip=true -X'
                  //sh 'mvn -f ${SVN_FOLD}/pom.xml clean package'
             }
         }

@@ -16,17 +16,17 @@ public class BaseDO implements Serializable {
      * 主键ID,通过UUID生成
      */
     @TableId
-    private String id;
+    private String guid;
 
     /**
      * 创建时间
      */
-    private Date createDate;
+    private Date createTime;
 
     /**
      * 更新时间
      */
-    private Date updateDate;
+    private Date updateTime;
 
     /**
      * 删除标识 0-未删除,1-已删除

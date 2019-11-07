@@ -1,17 +1,31 @@
 package com.csbr.cloud.mybatis.config;
 
+//import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.pool.DruidDataSource;
 import com.atomikos.icatch.jta.UserTransactionImp;
 import com.atomikos.icatch.jta.UserTransactionManager;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 //import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.csbr.cloud.mybatis.dyna.DynamicDataSource;
+import com.csbr.cloud.mybatis.dyna.DynamicDataSourceHolder;
 import com.csbr.cloud.mybatis.dyna.DynamicDataSourceInterceptor;
+import io.seata.rm.datasource.DataSourceProxy;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
+import javax.sql.DataSource;
 import javax.transaction.SystemException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author zhangheng
@@ -19,7 +33,7 @@ import javax.transaction.SystemException;
  * mybatis-plus配置类
  */
 @Configuration
-@EnableConfigurationProperties
+@EnableConfigurationProperties()
 //@MapperScan(basePackages = {"com.csbr.qingcloud.*.*.mapper"})
 public class MybatisPlusConfig {
 
@@ -50,36 +64,6 @@ public class MybatisPlusConfig {
 //    }
 
 
-    /**
-     * 配置数据源
-     * 主库
-     */
-//    @Bean(name = "master")
-//    @ConfigurationProperties(prefix = "spring.datasource.dynamic.datasource.master")
-//    public DataSource master() {
-//        return DataSourceBuilder.create().build();
-//    }
-
-    /**
-     * 从库
-     */
-//    @Bean(name = "slave")
-//    @ConfigurationProperties(prefix = "spring.datasource.dynamic.datasource.slave")
-//    public DataSource slave() {
-//        return DataSourceBuilder.create().build();
-//    }
-//
-//    @Primary
-//    @Bean(name = "dynamicDataSource")
-//    public DynamicDataSource dataSource(@Qualifier("master") DataSource master,
-//                                        @Qualifier("slave") DataSource slave) {
-//        Map<Object, Object> targetDataSource = new HashMap<>();
-//        targetDataSource.put(DynamicDataSourceHolder.DB_MASTER, master);
-//        targetDataSource.put(DynamicDataSourceHolder.DB_SLAVE, slave);
-//        DynamicDataSource dataSource = new DynamicDataSource();
-//        dataSource.setTargetDataSources(targetDataSource);
-//        return dataSource;
-//    }
 
 
     @Bean
@@ -124,29 +108,89 @@ public class MybatisPlusConfig {
      * @return
      */
     /*atomikos事务管理器*/
-    public UserTransactionManager userTransactionManager() {
-        UserTransactionManager userTransactionManager = new UserTransactionManager();
-        userTransactionManager.setForceShutdown(true);
-        return userTransactionManager;
-    }
-
-    public UserTransactionImp userTransactionImp() throws SystemException {
-        UserTransactionImp userTransactionImp = new UserTransactionImp();
-        userTransactionImp.setTransactionTimeout(5000);
-        return userTransactionImp;
-    }
+//    public UserTransactionManager userTransactionManager() {
+//        UserTransactionManager userTransactionManager = new UserTransactionManager();
+//        userTransactionManager.setForceShutdown(true);
+//        return userTransactionManager;
+//    }
+//
+//    public UserTransactionImp userTransactionImp() throws SystemException {
+//        UserTransactionImp userTransactionImp = new UserTransactionImp();
+//        userTransactionImp.setTransactionTimeout(5000);
+//        return userTransactionImp;
+//    }
 
     /**
      * jta分布式事务管理
      * @return
      * @throws SystemException
      */
-    @Bean
-    public JtaTransactionManager jtaTransactionManager() throws SystemException {
-        JtaTransactionManager jtaTransactionManager = new JtaTransactionManager();
-        jtaTransactionManager.setTransactionManager(userTransactionManager());
-        jtaTransactionManager.setUserTransaction(userTransactionImp());
-        jtaTransactionManager.setAllowCustomIsolationLevels(true);
-        return jtaTransactionManager;
+//    @Bean
+//    public JtaTransactionManager jtaTransactionManager() throws SystemException {
+//        JtaTransactionManager jtaTransactionManager = new JtaTransactionManager();
+//        jtaTransactionManager.setTransactionManager(userTransactionManager());
+//        jtaTransactionManager.setUserTransaction(userTransactionImp());
+//        jtaTransactionManager.setAllowCustomIsolationLevels(true);
+//        return jtaTransactionManager;
+//    }
+
+
+    /**
+     * 分布式seate相关配置
+     * @return
+     */
+    //主库
+    @Bean("master")
+    @ConfigurationProperties(prefix = "spring.datasource.dynamic.datasource.master")
+    public DataSource dataSourceMaster() {
+        return DataSourceBuilder.create().type(com.alibaba.druid.pool.DruidDataSource.class).build();
     }
+
+    //从库
+    @Bean("slave")
+    @ConfigurationProperties(prefix = "spring.datasource.dynamic.datasource.slave")
+    public DataSource dataSourceSlave() {
+        return DataSourceBuilder.create().type(com.alibaba.druid.pool.DruidDataSource.class).build();
+    }
+
+
+    @Bean(name = "master")
+    public DataSourceProxy masterDataSourceProxy(@Qualifier("master") DataSource dataSource) {
+        return new DataSourceProxy(dataSource);
+    }
+
+    @Bean(name = "slave")
+    public DataSourceProxy slaveDataSourceProxy(@Qualifier("slave") DataSource dataSource) {
+        return new DataSourceProxy(dataSource);
+    }
+
+//    @Primary
+//    @Bean("dynamicDataSource")
+//    public DataSource dynamicDataSource(@Qualifier("master") DataSource dataSourceMaster,
+//                                        @Qualifier("slave") DataSource dataSourceSlave
+//                                        ) {
+//
+//        DynamicRoutingDataSource dynamicRoutingDataSource = new DynamicRoutingDataSource();
+//
+//        Map<Object, Object> dataSourceMap = new HashMap<>(2);
+//        dataSourceMap.put(DataSourceKey.MASTER.name(), dataSourceMaster);
+//        dataSourceMap.put(DataSourceKey.SLAVE.name(), dataSourceSlave);
+//
+//        dynamicRoutingDataSource.setDefaultTargetDataSource(dataSourceMaster);
+//        dynamicRoutingDataSource.setTargetDataSources(dataSourceMap);
+//
+//        DynamicDataSourceContextHolder.getDataSourceKeys().addAll(dataSourceMap.keySet());
+//
+//        return dynamicRoutingDataSource;
+//    }
+
+//    @Bean
+//    @ConfigurationProperties(prefix = "mybatis")
+//    public MybatisSqlSessionFactoryBean sqlSessionFactoryBean(@Qualifier("dynamicDataSource") DataSource dataSource) {
+//        // 这里用 MybatisSqlSessionFactoryBean 代替了 SqlSessionFactoryBean，否则 MyBatisPlus 不会生效
+//        MybatisSqlSessionFactoryBean mybatisSqlSessionFactoryBean = new MybatisSqlSessionFactoryBean();
+//        mybatisSqlSessionFactoryBean.setDataSource(dataSource);
+//        return mybatisSqlSessionFactoryBean;
+//    }
+
 }
