@@ -1,0 +1,6 @@
+# Auto Configuration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.csbr.cloud.mq.kafkaConfig.KafkaProducerConfig,\
+  com.csbr.cloud.mq.kafkaConfig.KafkaConsumerConfig,\
+  com.csbr.cloud.mq.rabbitConfig.RabbitMqConfig,\
+  com.csbr.cloud.mq.mqttConfig.MqttConfig

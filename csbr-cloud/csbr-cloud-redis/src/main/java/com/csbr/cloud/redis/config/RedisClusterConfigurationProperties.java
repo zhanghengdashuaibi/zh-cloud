@@ -24,4 +24,9 @@ public class RedisClusterConfigurationProperties {
     List<String> nodes;
 
     Map<String,Long> keyTtl;
+
+    private String password;
+
+    private Integer database;
+
 }

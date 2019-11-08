@@ -1,7 +1,0 @@
-com\csbr\cloud\mybatis\entity\BaseDO.class
-com\csbr\cloud\mybatis\config\MybatisPlusConfig.class
-com\csbr\cloud\mybatis\config\ExecutorConfig.class
-com\csbr\cloud\mybatis\dyna\DynamicDataSource.class
-com\csbr\cloud\mybatis\dyna\DynamicDataSourceInterceptor.class
-com\csbr\cloud\mybatis\dyna\DynamicDataSourceHolder.class
-com\csbr\cloud\mybatis\config\VisiableThreadPoolTaskExecutor.class

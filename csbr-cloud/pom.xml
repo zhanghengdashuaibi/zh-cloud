@@ -21,6 +21,7 @@
         <module>csbr-cloud-mybatis</module>
         <module>csbr-cloud-redis</module>
         <module>csbr-cloud-distributelock</module>
+        <module>csbr-cloud-mq</module>
     </modules>
     <properties>
         <java.version>1.8</java.version>
