@@ -1,31 +1,27 @@
 package com.csbr.cloud.mybatis.config;
 
-//import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidDataSource;
-import com.atomikos.icatch.jta.UserTransactionImp;
-import com.atomikos.icatch.jta.UserTransactionManager;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 //import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.csbr.cloud.mybatis.dyna.DynamicDataSource;
-import com.csbr.cloud.mybatis.dyna.DynamicDataSourceHolder;
 import com.csbr.cloud.mybatis.dyna.DynamicDataSourceInterceptor;
+import com.csbr.cloud.mybatis.enums.DataSourceType;
 import io.seata.rm.datasource.DataSourceProxy;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.transaction.jta.JtaTransactionManager;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
-import javax.transaction.SystemException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author zhangheng
@@ -34,7 +30,6 @@ import java.util.Map;
  */
 @Configuration
 @EnableConfigurationProperties()
-//@MapperScan(basePackages = {"com.csbr.qingcloud.*.*.mapper"})
 public class MybatisPlusConfig {
 
     /**
@@ -47,6 +42,17 @@ public class MybatisPlusConfig {
         //设置方言类型
         page.setDialectType("mysql");
         return page;
+    }
+
+    /**
+     * 自动填充功能
+     * @return
+     */
+    @Bean
+    public GlobalConfig globalConfig() {
+        GlobalConfig globalConfig = new GlobalConfig();
+        globalConfig.setMetaObjectHandler(new MetaHandler());
+        return globalConfig;
     }
 
     /***
@@ -68,7 +74,10 @@ public class MybatisPlusConfig {
 
     @Bean
     public DynamicDataSourceInterceptor dynamicDataSourceInterceptor(){
-        return new DynamicDataSourceInterceptor();
+        DynamicDataSourceInterceptor dynamicDataSourceInterceptor = new DynamicDataSourceInterceptor();
+        Properties properties = new Properties();
+        dynamicDataSourceInterceptor.setProperties(properties);
+        return dynamicDataSourceInterceptor;
     }
     /**
      * 根据数据源创建SqlSessionFactory
@@ -98,10 +107,10 @@ public class MybatisPlusConfig {
     /**
      * 配置事务管理器
      */
-//    @Bean
-//    public DataSourceTransactionManager transactionManager(DynamicDataSource dataSource) throws Exception {
-//        return new DataSourceTransactionManager(dataSource);
-//    }
+    @Bean()
+    public DataSourceTransactionManager transactionManager(@Qualifier("dynamicDataSource") DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
+    }
 
     /**
      * 分布式事务使用JTA管理，只需配置一个JtaTransactionManager
@@ -143,25 +152,37 @@ public class MybatisPlusConfig {
     @Bean("master")
     @ConfigurationProperties(prefix = "spring.datasource.dynamic.datasource.master")
     public DataSource dataSourceMaster() {
-        return DataSourceBuilder.create().type(com.alibaba.druid.pool.DruidDataSource.class).build();
+        DruidDataSource druidDataSource = new DruidDataSource();
+        return druidDataSource;
     }
 
     //从库
     @Bean("slave")
     @ConfigurationProperties(prefix = "spring.datasource.dynamic.datasource.slave")
     public DataSource dataSourceSlave() {
-        return DataSourceBuilder.create().type(com.alibaba.druid.pool.DruidDataSource.class).build();
+        DruidDataSource druidDataSource = new DruidDataSource();
+        return druidDataSource;
     }
 
+//    @Bean(name = "master")
+//    public DataSourceProxy masterDataSourceProxy(@Qualifier("master") DataSource dataSource) {
+//        return new DataSourceProxy(dataSource);
+//    }
+//
+//    @Bean(name = "slave")
+//    public DataSourceProxy slaveDataSourceProxy(@Qualifier("slave") DataSource dataSource) {
+//        return new DataSourceProxy(dataSource);
+//    }
 
-    @Bean(name = "master")
-    public DataSourceProxy masterDataSourceProxy(@Qualifier("master") DataSource dataSource) {
-        return new DataSourceProxy(dataSource);
-    }
-
-    @Bean(name = "slave")
-    public DataSourceProxy slaveDataSourceProxy(@Qualifier("slave") DataSource dataSource) {
-        return new DataSourceProxy(dataSource);
+    @Bean(name = "dynamicDataSource")
+    @Primary
+    public DataSource dynamicDataSource(@Qualifier("master") DataSource masterDataSource,
+                                        @Qualifier("slave") DataSource slaveDataSource)
+    {
+        Map<Object, Object> targetDataSources = new HashMap<>();
+        targetDataSources.put(DataSourceType.MASTER.name(), masterDataSource);
+        targetDataSources.put(DataSourceType.SLAVE.name(), slaveDataSource);
+        return new DynamicDataSource(masterDataSource, targetDataSources);
     }
 
 //    @Primary
@@ -193,4 +214,12 @@ public class MybatisPlusConfig {
 //        return mybatisSqlSessionFactoryBean;
 //    }
 
+    /**
+     * 乐观锁插件
+     * @return
+     */
+    @Bean
+    public OptimisticLockerInterceptor optimisticLockerInterceptor() {
+        return new OptimisticLockerInterceptor();
+    }
 }

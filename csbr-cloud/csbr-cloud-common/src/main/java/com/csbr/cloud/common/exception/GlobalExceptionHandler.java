@@ -16,9 +16,11 @@
 
 package com.csbr.cloud.common.exception;
 
+import com.csbr.cloud.common.enums.UserError;
 import com.csbr.cloud.common.response.CommonRes;
 import com.csbr.cloud.common.response.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -34,6 +36,7 @@ import java.util.List;
  */
 @Slf4j
 @RestControllerAdvice
+@Configuration
 public class GlobalExceptionHandler {
 
     /**
@@ -44,9 +47,9 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public static CommonRes exception(Exception e) {
-        e.printStackTrace();
+    public CommonRes exception(Exception e) {
         log.error("全局异常信息 ex={}", e.getMessage(), e);
+
         return new CommonRes(ResponseCode.Fail.FAIL_CODE, e);
     }
 
@@ -58,11 +61,13 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public static CommonRes bodyValidExceptionHandler(MethodArgumentNotValidException exception) {
+    public CommonRes bodyValidExceptionHandler(MethodArgumentNotValidException exception) {
         exception.printStackTrace();
         List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
         log.warn(fieldErrors.get(0).getDefaultMessage());
-        return new CommonRes(ResponseCode.Fail.FAIL_CODE, fieldErrors.get(0).getDefaultMessage());
+
+
+        return new CommonRes(UserError.FIELD_VERIFY_FAIL.getCode(), fieldErrors.get(0).getDefaultMessage());
     }
 
 
@@ -74,9 +79,39 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({CsbrCheckedException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public static CommonRes cehckExceptionHandler(CsbrCheckedException exception) {
+    public CommonRes cehckExceptionHandler(CsbrCheckedException exception) {
         exception.printStackTrace();
         return new CommonRes(ResponseCode.Cehck.ERROR_CODE, exception.getMessage());
     }
 
+    // region 自有异常
+    @ExceptionHandler({CsbrBaseException.class})
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public CommonRes CsbrExceptionHandler(CsbrBaseException ex) {
+        return CsbrExceptionHandlerBody(ex);
+    }
+
+    private CommonRes CsbrExceptionHandlerBody(CsbrBaseException exception) {
+        String message = "Others type error: ";
+        if (exception instanceof CsbrUserException) {
+            message = "User type error: ";
+        }
+        if (exception instanceof CsbrSystemException) {
+            message = "System type error: ";
+        }
+        if (exception instanceof CsbrNoninteractiveException) {
+            message = "Noninteractive interface type error: ";
+        }
+
+        log.error(message + "{}", exception.getMessage(), exception);
+
+        // 如果有异常来源，则将异常来源信息填入到返回jason的data属性中
+        String causeMsg = "";
+        if (exception.getCause() != null) {
+            causeMsg = exception.getCause().getMessage();
+        }
+
+        return CommonRes.build(exception.getErrorCode(), exception.getMessage(), causeMsg);
+    }
+    // endregion
 }

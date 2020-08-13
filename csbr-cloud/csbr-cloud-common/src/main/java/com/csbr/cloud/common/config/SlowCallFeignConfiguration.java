@@ -4,6 +4,8 @@ import feign.Request;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * 较慢调用Feign配置
  * @author arthas on 2019/10/15
@@ -16,6 +18,6 @@ public class SlowCallFeignConfiguration {
      */
     @Bean
     public Request.Options slowCallOptions(){
-        return new Request.Options(5000,50000);
+        return new Request.Options(5, TimeUnit.SECONDS,50,TimeUnit.SECONDS,true);
     }
 }

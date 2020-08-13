@@ -1,0 +1,2 @@
+# Auto Configuration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.csbr.cloud.es.config.ElasticsearchRestClientProperties,com.csbr.cloud.es.util.ElasticsearchHelper

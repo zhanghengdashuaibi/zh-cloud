@@ -4,6 +4,8 @@ import feign.Request;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * 普通调用Feign配置
  * @author arthas on 2019/10/15
@@ -16,6 +18,6 @@ public class NormalCallFeignConfiguration {
      */
     @Bean
     public Request.Options normalCallOptions(){
-        return new Request.Options(5000,30000);
+        return new Request.Options(5, TimeUnit.SECONDS,30,TimeUnit.SECONDS,true);
     }
 }

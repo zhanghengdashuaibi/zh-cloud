@@ -4,6 +4,8 @@ import feign.Request;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * 快速调用Feign配置
  *
@@ -20,6 +22,6 @@ public class FastCallFeignConfiguration {
      */
     @Bean
     public Request.Options fastCallOptions() {
-        return new Request.Options(5000, 15000);
+        return new Request.Options(5, TimeUnit.SECONDS, 15, TimeUnit.SECONDS, true);
     }
 }

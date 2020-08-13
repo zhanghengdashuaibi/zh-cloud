@@ -21,7 +21,7 @@ public class JwtUtil {
 
     private final static Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
-    private static final String APP_KEY = "qudan_key"; //进行数字签名的私钥，一定要保管好
+    private static final String APP_KEY = "csbr_key"; //进行数字签名的私钥，一定要保管好
 
     private static final String CLAIM_KEY_CREATED = "created";//创建时间
 

@@ -1,2 +1,2 @@
 # Auto Configuration
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.csbr.qingcloud.swagger.config.SwaggerAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.csbr.qingcloud.swagger.config.SwaggerAutoConfiguration,com.csbr.qingcloud.swagger.config.ModelSortInit

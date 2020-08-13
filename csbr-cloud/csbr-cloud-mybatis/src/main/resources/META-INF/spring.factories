@@ -1,2 +1,6 @@
 # Auto Configuration
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.csbr.cloud.mybatis.config.MybatisPlusConfig
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.csbr.cloud.mybatis.config.MybatisPlusConfig,\
+  com.csbr.cloud.mybatis.config.UserInfoAspect,\
+  com.csbr.cloud.mybatis.interceptor.FeignInterceptor,\
+  com.csbr.cloud.mybatis.util.ListToHierarchical,\
+  com.csbr.cloud.mybatis.util.ValidatorUtil,com.csbr.cloud.mybatis.config.DruidProperties,com.csbr.cloud.mybatis.dyna.DynamicDataSourceInterceptor

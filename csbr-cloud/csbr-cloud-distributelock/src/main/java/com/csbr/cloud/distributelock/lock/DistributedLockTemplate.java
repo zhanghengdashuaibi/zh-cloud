@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
  * @date 2019/11/5 18:18
  * redission 分布式锁的模板
  */
-//@Component
-//@Configuration
+@Component
+@Configuration
 public interface DistributedLockTemplate {
 
     long DEFAULT_WAIT_TIME = 30;

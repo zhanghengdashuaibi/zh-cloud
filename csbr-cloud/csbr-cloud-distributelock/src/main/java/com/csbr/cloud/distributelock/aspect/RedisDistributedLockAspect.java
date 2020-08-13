@@ -1,4 +1,4 @@
-package com.csbr.cloud.distributelock.config;
+package com.csbr.cloud.distributelock.aspect;
 
 import com.csbr.cloud.distributelock.lock.DistributedLock;
 import com.csbr.cloud.distributelock.annotation.RedisLock;

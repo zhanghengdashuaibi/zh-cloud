@@ -10,8 +10,6 @@ pipeline {
     //环境定义
     environment{
 
-        def SRCCODE_DIR = "/var/jenkins_home/workspace/${env.JOB_NAME}"
-        def DAILYCI_DIR = "/var/ciOutput/dailyCiOutput"
         def SVN_FOLD = "csbr-cloud"
     }
     //定时任务
@@ -20,6 +18,10 @@ pipeline {
         //每天凌晨2点自动构建
     //    cron('H 2 * * *')
     //}
+     options {
+            // 设置保留的最大历史构建数为6
+        buildDiscarder(logRotator(numToKeepStr: '6'))
+     }
     //全局定义工具
     tools {
         //工具名称必须在Jenkins 管理Jenkins → 全局工具配置中预配置。
@@ -31,7 +33,8 @@ pipeline {
             steps {
                 //sh './gradlew build'
                  //执行shell命令 mvn package -pl ${your.project.name} -am
-                 sh 'mvn -f ./pom.xml clean install -Dmaven.test.skip=true -X'
+                 //sh 'mvn -f ./pom.xml clean install -Dmaven.test.skip=true -X'
+                 sh 'mvn -f ./pom.xml clean deploy -Dmaven.test.skip=true -X'
                  //sh 'mvn -f ${SVN_FOLD}/pom.xml clean package'
             }
         }

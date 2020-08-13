@@ -24,22 +24,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--mysql-->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
         <!--mybatis-puls-->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.2.0</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.baomidou</groupId>-->
-<!--            <artifactId>mybatis-plus</artifactId>-->
-<!--            <version>3.2.0</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-extension</artifactId>
@@ -52,10 +42,10 @@
             <version>3.8.6</version>
         </dependency>
         <!--atomikos事务管理器-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jta-atomikos</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-jta-atomikos</artifactId>-->
+<!--        </dependency>-->
         <!--主从配置依赖-->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -63,38 +53,52 @@
             <version>2.4.2</version>
         </dependency>
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
-            <scope>compile</scope>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>1.1.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-spring-boot-starter</artifactId>
+            <version>1.2.0</version>
             <exclusions>
                 <exclusion>
-                    <groupId>io.seata</groupId>
                     <artifactId>seata-all</artifactId>
+                    <groupId>io.seata</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-all</artifactId>
-            <version>0.9.0</version>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+            <version>2.2.0.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.seata</groupId>
+                    <artifactId>seata-spring-boot-starter</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.alibaba/transmittable-thread-local -->
+        <dependency>
             <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-            <version>1.1.10</version>
+            <artifactId>transmittable-thread-local</artifactId>
+            <version>2.11.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.csbr.qingcloud</groupId>
+            <artifactId>csbr-cloud-common</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                <version>2.1.0.RELEASE</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 </project>

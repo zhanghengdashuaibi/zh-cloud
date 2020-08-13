@@ -1,7 +1,9 @@
 package com.csbr.cloud.mq.kafkaConfig;
 
+import com.csbr.cloud.mq.service.KafkaStdService;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,7 +26,7 @@ import java.util.Map;
 @EnableKafka
 @EnableConfigurationProperties
 //如果该值为空，则返回false;如果值不为空，则将该值与havingValue指定的值进行比较，如果一样则返回true;否则返回false。如果返回值为false，则该configuration不生效；为true则生效
-@ConditionalOnProperty(name="csbr.kafka.producer.enable", havingValue="true")
+@ConditionalOnProperty(name = "csbr.kafka.producer.enable", havingValue = "true")
 public class KafkaProducerConfig {
 
     /**
@@ -32,7 +34,7 @@ public class KafkaProducerConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    public KafkaProducerProperties kafkaProducerProperties(){
+    public KafkaProducerProperties kafkaProducerProperties() {
         return new KafkaProducerProperties();
     }
 
@@ -58,6 +60,16 @@ public class KafkaProducerConfig {
     @Bean
     public KafkaTemplate<String, String> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
+    }
+
+    /**
+     * 标准kafka服务注册到容器
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean({KafkaStdService.class})
+    public KafkaStdService kafkaStdService() {
+        return new KafkaStdService(kafkaTemplate());
     }
 
 }

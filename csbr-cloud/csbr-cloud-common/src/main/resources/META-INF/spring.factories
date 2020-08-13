@@ -1,0 +1,3 @@
+# Auto Configuration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.csbr.cloud.common.exception.GlobalExceptionHandler,\
+  com.csbr.cloud.common.util.CsbrBeanUtil

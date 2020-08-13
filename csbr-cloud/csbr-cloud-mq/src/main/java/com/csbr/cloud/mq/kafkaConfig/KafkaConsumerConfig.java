@@ -54,7 +54,7 @@ public class KafkaConsumerConfig {
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, kafkaConsumerProperties().getSessionTimeout());
         props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, kafkaConsumerProperties().getMaxPollInterval());
         props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, kafkaConsumerProperties().getMaxPartitionFetchBytes());
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConsumerProperties().getGroupId());
+//        props.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConsumerProperties().getGroupId());
 //        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 //        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         try {
@@ -106,7 +106,7 @@ public class KafkaConsumerConfig {
 //    }
 
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> csbrKafkaListenerContainerFactory() {
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         //批量消费

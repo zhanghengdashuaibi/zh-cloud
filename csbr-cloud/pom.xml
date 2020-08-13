@@ -6,7 +6,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.6.RELEASE</version>
+<!--        <version>2.1.6.RELEASE</version>-->
+        <version>2.3.1.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <!--父工程pom-->
@@ -22,6 +23,10 @@
         <module>csbr-cloud-redis</module>
         <module>csbr-cloud-distributelock</module>
         <module>csbr-cloud-mq</module>
+        <module>csbr-cloud-tcc</module>
+        <module>csbr-cloud-canal</module>
+        <module>csbr-cloud-flink</module>
+        <module>csbr-cloud-es</module>
     </modules>
     <properties>
         <java.version>1.8</java.version>
@@ -29,7 +34,8 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-        <spring-cloud.version>Greenwich.SR2</spring-cloud.version>
+<!--        <spring-cloud.version>Greenwich.SR2</spring-cloud.version>-->
+        <spring-cloud.version>Hoxton.SR6</spring-cloud.version>
         <lombok-version>1.16.14</lombok-version>
     </properties>
 
@@ -43,11 +49,49 @@
             <artifactId>lombok</artifactId>
             <version>${lombok-version}</version>
         </dependency>
+        <!--openfeign-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <!-- web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <artifactId>spring-boot-starter-web</artifactId>
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>org.springframework.boot</groupId>-->
+<!--                    <artifactId>spring-boot-starter-tomcat</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
         </dependency>
+        <!--fastjson-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.58</version>
+        </dependency>
+        <!--mysql-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!--jjwt-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <!--            <version>0.7.0</version>-->
+            <version>0.9.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.10</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-jetty</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 
     <dependencyManagement>
@@ -62,5 +106,21 @@
         </dependencies>
     </dependencyManagement>
 
-
+    <!-- 使用分发管理将本项目打成jar包，直接上传到指定服务器 -->
+    <distributionManagement>
+        <!--正式版本-->
+        <repository>
+            <!-- nexus服务器中用户名：在settings.xml中<server>的id-->
+            <id>nexus3</id>
+            <!-- 这个名称自己定义 -->
+            <name>Release repository</name>
+            <url>http://192.168.5.4:8001/repository/csbr-releases</url>
+        </repository>
+        <!--快照-->
+        <snapshotRepository>
+            <id>nexus3</id>
+            <name>Snapshots repository</name>
+            <url>http://192.168.5.4:8001/repository/csbr-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

@@ -1,5 +1,6 @@
 package com.csbr.cloud.distributelock.config;
 
+import com.csbr.cloud.distributelock.aspect.RedisDistributedLockAspect;
 import com.csbr.cloud.distributelock.lock.DistributedLock;
 import com.csbr.cloud.distributelock.lock.RedisDistributedLock;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -19,8 +20,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class RedisDistributedLockAutoConfiguration {
 
     @Bean
-    public com.csbr.cloud.distributelock.config.RedisDistributedLockAspect redisDistributedLockAspect(){
-        return new com.csbr.cloud.distributelock.config.RedisDistributedLockAspect();
+    public RedisDistributedLockAspect redisDistributedLockAspect(){
+        return new RedisDistributedLockAspect();
     }
     @Bean
     public RedisTemplate<Object, Object> redisTemplate(){
